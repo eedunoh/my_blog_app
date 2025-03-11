@@ -1,0 +1,71 @@
+pipeline {
+  agent any
+
+  environment {
+    DOCKERHUB_CREDENTIALS = credentials('20f0021d-f027-4216-982f-f8cdf5271d88')   // Jenkins credential ID for dockerhub logion access
+    IMAGE_NAME = 'jackedu/blog_app_repo'
+    IMAGE_TAG = 'latest'
+  }
+
+  stages {
+
+    stage('Checkout Code') {
+      steps {
+        echo 'Checking out the repository...'
+        checkout scm
+      }
+    }
+
+    stage('Build Docker Image') {
+      steps {
+        echo 'Building Docker image...'
+        dir('app_folder') {
+          script {
+            dockerImage = docker.build("${IMAGE_NAME}:${IMAGE_TAG}")
+          }
+        }
+      }
+    }
+
+    stage('Push to Docker Hub') {
+      steps {
+        echo 'Pushing image to Docker Hub...'
+        script {
+          docker.withRegistry('https://index.docker.io/v1/', DOCKERHUB_CREDENTIALS) {
+            dockerImage.push("${IMAGE_TAG}")
+          }
+        }
+      }
+    }
+
+    stage('Terraform Init & Apply') {
+      environment {
+        AWS_ACCESS_KEY_ID = credentials('aws_access_key_id')        // Jenkins Secret Text credential ID for Access Key
+        AWS_SECRET_ACCESS_KEY = credentials('aws_secret_access_key') // Jenkins Secret Text credential ID for Secret Key
+        AWS_DEFAULT_REGION = 'eu-north-1'                            // Your AWS region (can be hard-coded or another credential)
+      }
+
+      steps {
+        dir('terraform_folder') {
+          echo 'Initializing Terraform...'
+          sh 'terraform init'
+          
+          echo 'Planning Terraform...'
+          sh 'terraform plan'
+          
+          echo 'Applying Terraform...'
+          sh 'terraform apply -auto-approve'
+        }
+      }
+    }
+  }
+
+  post {
+    success {
+      echo '✅ Pipeline completed successfully!'
+    }
+    failure {
+      echo '❌ Pipeline failed!'
+    }
+  }
+}

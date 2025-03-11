@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Trending News</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+            font-family: Arial, sans-serif;
+            padding-top: 20px;
+        }
+        .container {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 1200px;
+            text-align: left;
+            overflow-y: auto;
+        }
+        h2 {
+            margin-bottom: 15px;
+            font-size: 24px;
+        }
+        p {
+            color: #555;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        .news-section {
+            margin-top: 15px;
+        }
+        h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 5px;
+        }
+        a {
+            color: #007bff;
+            text-decoration: none;
+            font-size: 15px;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .logout {
+            display: inline-block;
+            background-color: #dc3545;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        .logout:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Welcome, {{ username }}</h2>
+        <p>Stay updated with the latest trending topics.</p>
+
+        <div class="news-section">
+            <h3>AI & Tech</h3>
+            <p><b>ChatGPT-5 Leaks:</b> OpenAI hints at groundbreaking improvements. <a href="#">Read more</a></p>
+            <p><b>Autonomous Cars:</b> Tesla advances self-driving technology. <a href="#">Read more</a></p>
+
+            <h3>Nigeria Politics</h3>
+            <p><b>Election Reforms:</b> Lawmakers propose major voting changes. <a href="#">Read more</a></p>
+            <p><b>Economic Policies:</b> New government strategy to tackle inflation. <a href="#">Read more</a></p>
+
+            <h3>US Politics</h3>
+            <p><b>Presidential Debate:</b> Key moments from last night’s event. <a href="#">Read more</a></p>
+            <p><b>Tech Regulations:</b> Lawmakers propose AI oversight laws. <a href="#">Read more</a></p>
+
+            <h3>Sports</h3>
+            <p><b>Champions League Drama:</b> Quarterfinals deliver shocking results. <a href="#">Read more</a></p>
+            <p><b>Super Eagles News:</b> Nigeria announces new World Cup coach. <a href="#">Read more</a></p>
+
+            <h3>Entertainment</h3>
+            <p><b>Oscars Predictions:</b> Who will take home Best Picture? <a href="#">Read more</a></p>
+            <p><b>Afrobeats Boom:</b> Nigerian artists dominate global charts. <a href="#">Read more</a></p>
+
+            <h3>Business & Economy</h3>
+            <p><b>Bitcoin Hits Record:</b> Crypto market surges to new highs. <a href="#">Read more</a></p>
+            <p><b>Stock Market:</b> Investors react to Federal Reserve decisions. <a href="#">Read more</a></p>
+
+            <h3>Science & Space</h3>
+            <p><b>Mars Mission:</b> NASA prepares next rover launch. <a href="#">Read more</a></p>
+            <p><b>Fusion Energy Breakthrough:</b> Scientists claim limitless clean power. <a href="#">Read more</a></p>
+        </div>
+
+        <a href="{{ url_for('logout') }}" class="logout">Logout</a>
+    </div>
+</body>
+</html>

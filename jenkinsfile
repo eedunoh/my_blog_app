@@ -10,13 +10,15 @@ pipeline {
     environment {
         IMAGE_NAME = 'jackedu/blog_app_repo'
         IMAGE_TAG = 'latest'
+        TERRAFORM_DIR = 'terraform_folder'
+        TF_PLAN_FILE = 'tfplan.binary'
     }
 
     stages {
 
         stage('Clone Repository') {
             steps {
-                echo 'Cleaning and cloning repository...'
+                echo '📥 Cleaning workspace and cloning repository...'
                 deleteDir()
                 git branch: 'main', url: 'https://github.com/eedunoh/my_blog_app.git'
                 sh 'ls -lart'
@@ -36,8 +38,8 @@ pipeline {
 
         stage('Push Docker Image to Docker Hub') {
             steps {
+                echo "🚀 Pushing Docker image to Docker Hub..."
                 script {
-                    echo "🚀 Pushing Docker image to Docker Hub..."
                     docker.withRegistry('https://index.docker.io/v1/', 'my_docker_hub_secrets') {
                         dockerImage.push("${IMAGE_TAG}")
                     }
@@ -48,10 +50,15 @@ pipeline {
         stage('Terraform Init') {
             steps {
                 echo "⚙️ Initializing Terraform..."
-                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'my_aws_credentials']]) {
-                    dir('terraform_folder') {
-                        sh 'echo "================= Terraform Init =================="'
-                        sh 'terraform init'
+                withCredentials([[
+                    $class: 'AmazonWebServicesCredentialsBinding',
+                    credentialsId: 'my_aws_credentials'
+                ]]) {
+                    dir("${TERRAFORM_DIR}") {
+                        sh '''
+                            echo "================= Terraform Init =================="
+                            terraform init
+                        '''
                     }
                 }
             }
@@ -63,16 +70,19 @@ pipeline {
             }
             steps {
                 echo "🔍 Running Terraform Plan..."
-                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'my_aws_credentials']]) {
-                    dir('terraform_folder') {
-                        sh 'echo "================= Terraform Plan =================="'
-                        // Generate binary plan
-                        sh 'terraform plan -out=tfplan.binary'
-                        // Generate human-readable plan text
-                        sh 'terraform show -no-color tfplan.binary > tfplan.txt'
+                withCredentials([[
+                    $class: 'AmazonWebServicesCredentialsBinding',
+                    credentialsId: 'my_aws_credentials'
+                ]]) {
+                    dir("${TERRAFORM_DIR}") {
+                        sh '''
+                            echo "================= Terraform Plan =================="
+                            terraform plan -out=${TF_PLAN_FILE}
+                            terraform show -no-color ${TF_PLAN_FILE} > tfplan.txt
+                        '''
                     }
-                    // Archive the readable tfplan.txt in Jenkins for review
-                    archiveArtifacts artifacts: 'terraform_folder/tfplan.txt', onlyIfSuccessful: true
+                    // Archive artifacts for review
+                    archiveArtifacts artifacts: "${TERRAFORM_DIR}/${TF_PLAN_FILE}, ${TERRAFORM_DIR}/tfplan.txt", onlyIfSuccessful: true
                 }
             }
         }
@@ -82,12 +92,16 @@ pipeline {
                 expression { params.APPLY_TERRAFORM }
             }
             steps {
-                echo "🚀 Applying Terraform Plan from tfplan.binary..."
-                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'my_aws_credentials']]) {
-                    dir('terraform_folder') {
-                        sh 'echo "================= Terraform Apply =================="'
-                        // Apply the exact plan that was created in the Plan stage
-                        sh 'terraform apply -auto-approve tfplan.binary'
+                echo "🚀 Applying Terraform Plan..."
+                withCredentials([[
+                    $class: 'AmazonWebServicesCredentialsBinding',
+                    credentialsId: 'my_aws_credentials'
+                ]]) {
+                    dir("${TERRAFORM_DIR}") {
+                        sh '''
+                            echo "================= Terraform Apply =================="
+                            terraform apply -auto-approve ${TF_PLAN_FILE}
+                        '''
                     }
                 }
             }
@@ -99,10 +113,15 @@ pipeline {
             }
             steps {
                 echo "💣 Destroying Terraform Infrastructure..."
-                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'my_aws_credentials']]) {
-                    dir('terraform_folder') {
-                        sh 'echo "================= Terraform Destroy =================="'
-                        sh 'terraform destroy -auto-approve'
+                withCredentials([[
+                    $class: 'AmazonWebServicesCredentialsBinding',
+                    credentialsId: 'my_aws_credentials'
+                ]]) {
+                    dir("${TERRAFORM_DIR}") {
+                        sh '''
+                            echo "================= Terraform Destroy =================="
+                            terraform destroy -auto-approve
+                        '''
                     }
                 }
             }
@@ -119,6 +138,7 @@ pipeline {
         }
         always {
             echo '🔔 Pipeline finished running.'
+            cleanWs()  // Optional cleanup of workspace after each run
         }
     }
 }

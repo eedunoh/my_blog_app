@@ -2,7 +2,7 @@ pipeline {
   agent any
 
   environment {
-    DOCKERHUB_CREDENTIALS = credentials('20f0021d-f027-4216-982f-f8cdf5271d88')   // Jenkins credential ID for dockerhub logion access
+    DOCKERHUB_CREDENTIALS = credentials('my_docker_hub_secrets')   // Jenkins credential ID for dockerhub logion access
     IMAGE_NAME = 'jackedu/blog_app_repo'
     IMAGE_TAG = 'latest'
   }
@@ -40,9 +40,9 @@ pipeline {
 
     stage('Terraform Init & Apply') {
       environment {
-        AWS_ACCESS_KEY_ID = credentials('aws_access_key_id')        // Jenkins Secret Text credential ID for Access Key
-        AWS_SECRET_ACCESS_KEY = credentials('aws_secret_access_key') // Jenkins Secret Text credential ID for Secret Key
-        AWS_DEFAULT_REGION = 'eu-north-1'                            // Your AWS region (can be hard-coded or another credential)
+        AWS_ACCESS_KEY_ID = credentials('my_aws_credentials').accessKey          // Jenkins Secret Text credential ID for Access Key
+        AWS_SECRET_ACCESS_KEY = credentials('my_aws_credentials').secretKey      // Jenkins Secret Text credential ID for Secret Key
+        AWS_DEFAULT_REGION = 'eu-north-1'                                        // Your AWS region (can be hard-coded or another credential)
       }
 
       steps {

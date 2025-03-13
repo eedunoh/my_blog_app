@@ -2,7 +2,7 @@ pipeline {
   agent any
 
   environment {
-    DOCKERHUB_CREDENTIALS = credentials('my_docker_hub_secrets')   // Jenkins credential ID for dockerhub logion access
+    DOCKERHUB_CREDENTIALS = credentials('my_docker_hub_secrets')   // Jenkins credential ID for Docker Hub login
     IMAGE_NAME = 'jackedu/blog_app_repo'
     IMAGE_TAG = 'latest'
   }
@@ -40,21 +40,22 @@ pipeline {
 
     stage('Terraform Init & Apply') {
       environment {
-        AWS_ACCESS_KEY_ID = credentials('my_aws_credentials').accessKey          // Jenkins Secret Text credential ID for Access Key
-        AWS_SECRET_ACCESS_KEY = credentials('my_aws_credentials').secretKey      // Jenkins Secret Text credential ID for Secret Key
-        AWS_DEFAULT_REGION = 'eu-north-1'                                        // Your AWS region (can be hard-coded or another credential)
+        AWS_CREDS = credentials('my_aws_credentials')    // Jenkins credentials binding
+        AWS_DEFAULT_REGION = 'eu-north-1'
       }
 
       steps {
         dir('terraform_folder') {
           echo 'Initializing Terraform...'
-          sh 'terraform init'
-          
-          echo 'Planning Terraform...'
-          sh 'terraform plan'
-          
-          echo 'Applying Terraform...'
-          sh 'terraform apply -auto-approve'
+
+          sh '''
+            export AWS_ACCESS_KEY_ID=$AWS_CREDS_USR
+            export AWS_SECRET_ACCESS_KEY=$AWS_CREDS_PSW
+
+            terraform init
+            terraform plan
+            terraform apply -auto-approve
+          '''
         }
       }
     }

@@ -75,13 +75,12 @@ pipeline {
                     credentialsId: 'my_aws_credentials'
                 ]]) {
                     dir("${TERRAFORM_DIR}") {
-                        sh '''
+                        sh """
                             echo "================= Terraform Plan =================="
                             terraform plan -out=${TF_PLAN_FILE}
                             terraform show -no-color ${TF_PLAN_FILE} > tfplan.txt
-                        '''
+                        """
                     }
-                    // Archive artifacts for review
                     archiveArtifacts artifacts: "${TERRAFORM_DIR}/${TF_PLAN_FILE}, ${TERRAFORM_DIR}/tfplan.txt", onlyIfSuccessful: true
                 }
             }
@@ -98,10 +97,10 @@ pipeline {
                     credentialsId: 'my_aws_credentials'
                 ]]) {
                     dir("${TERRAFORM_DIR}") {
-                        sh '''
+                        sh """
                             echo "================= Terraform Apply =================="
                             terraform apply -auto-approve ${TF_PLAN_FILE}
-                        '''
+                        """
                     }
                 }
             }
@@ -118,10 +117,10 @@ pipeline {
                     credentialsId: 'my_aws_credentials'
                 ]]) {
                     dir("${TERRAFORM_DIR}") {
-                        sh '''
+                        sh """
                             echo "================= Terraform Destroy =================="
                             terraform destroy -auto-approve
-                        '''
+                        """
                     }
                 }
             }

@@ -8,10 +8,20 @@ terraform {
   }
 }
 
+
+terraform {
+  backend "s3" {
+    bucket = "blog-app-remote-state-bucket-fyi"
+    key    = "devops-project-data/jenkins/terraform.tfstate"
+    region = "eu-north-1"
+  }
+}
+
 # Configure the AWS Provider
 provider "aws" {
   region = "eu-north-1"
 }
+
 
 
 # We will use the default (existing) vpc. We dont want to create another one

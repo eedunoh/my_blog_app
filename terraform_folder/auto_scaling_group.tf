@@ -2,7 +2,7 @@ resource "aws_autoscaling_group" "blog_app_asg" {
   name = "blog_app_auto_scaling"
   availability_zones = ["eu-north-1a"]
   desired_capacity   = 1
-  max_size           = 3
+  max_size           = 4
   min_size           = 1
 
   mixed_instances_policy {

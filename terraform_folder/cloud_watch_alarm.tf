@@ -20,7 +20,7 @@ resource "aws_cloudwatch_metric_alarm" "cpu_gte_5" {
 
 # CloudWatch Alarm: CPU < 5% - Remove all On-Demand, return to 1 Spot
 resource "aws_cloudwatch_metric_alarm" "cpu_below_5" {
-  alarm_name          = "cpu_below_15"
+  alarm_name          = "cpu_below_5"
   comparison_operator = "LessThanThreshold"
   evaluation_periods  = 1
   metric_name         = "CPUUtilization"

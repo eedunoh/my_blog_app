@@ -46,7 +46,7 @@ resource "aws_iam_policy" "ssm_read_access" {
 
 
 
-# attching ssm_read_access policy to the ecs_task_role
+# attching ssm_read_access policy to the ec2 instance role
 
 resource "aws_iam_role_policy_attachment" "ec2_instance_policy_attachment" {
   role       = aws_iam_role.ec2_instance_role.name

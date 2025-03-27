@@ -11,8 +11,8 @@ terraform {
 
 terraform {
   backend "s3" {
-    bucket = "blog-app-remote-state-bucket-fyi"
-    key    = "devops-project-data/jenkins/terraform.tfstate"
+    bucket = "app-remote-state-bucket-fyi"
+    key    = "jenkins/terraform.tfstate"
     region = "eu-north-1"
   }
 }

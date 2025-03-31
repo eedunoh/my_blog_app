@@ -19,10 +19,6 @@ resource "aws_launch_template" "blog_app_lt" {
       name = aws_iam_instance_profile.ec2_instance_profile.name
     }
 
-    placement {
-      availability_zone = "eu-north-1a"
-    }
-
     credit_specification {
         cpu_credits = "standard"
     }

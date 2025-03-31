@@ -1,9 +1,9 @@
 resource "aws_lb" "app_alb" {
   name               = "blog-app-alb"
-  internal           = false
+  internal           = false                          # internal = false → The ALB is public-facing (accessible via the internet).
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb_sg.id]
-  subnets            = slice(data.aws_subnets.public_subnets.ids, 0, 2) # using subnet_ids of the default (existing) vpc as defined in the main.tf file. Alb will should use the two (2) spublic subnets
+  subnets            = slice(data.aws_subnets.public_subnets.ids, 0, 2)     # using subnet_ids of the default (existing) vpc as defined in the main.tf file. Alb will use the two (2) public subnets 
 
   # You can type this in terminal (bash) to get a list of your subnet:
   # aws ec2 describe-subnets --query "Subnets[*].{ID:SubnetId, Public:MapPublicIpOnLaunch, AZ:AvailabilityZone}"

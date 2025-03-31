@@ -1,6 +1,6 @@
 resource "aws_autoscaling_group" "blog_app_asg" {
   name = "blog_app_auto_scaling"
-  availability_zones = ["eu-north-1a"]
+  vpc_zone_identifier = slice(data.aws_subnets.public_subnets.ids, 0, 2)  # using subnet_ids of the default (existing) vpc as defined in the main.tf file. Auto Scaling Group will use the first two (2) public subnets
   desired_capacity   = 1
   max_size           = 4
   min_size           = 1

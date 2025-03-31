@@ -24,7 +24,22 @@ provider "aws" {
 
 
 
+# Since this project uses a CI/CD pipeline, Jenkins will be deployed first (if it hasn't been created already).
+# See jenkins deployment files here: https://github.com/eedunoh/terraform_jenkins_aws_install.git
+
+# To proceed with this project, you must first create the VPC, subnets, and install Jenkins using the files in the repository above. 
+
+
 # We will use the default (existing) vpc. We dont want to create another one
+
+
+# Use terraform import if you want Terraform to manage the resource.
+# Use data block if you just need to reference an existing resource without managing it.
+
+# AWS is case-sensitive when querying data sources compared to when creating them using aws resources
+# Always check how your data is structured especially tags before using them. "is-default" != "is_default"
+
+
 data "aws_vpc" "existing_vpc" {
   filter {
     name   = "is-default"
@@ -37,7 +52,7 @@ data "aws_vpc" "existing_vpc" {
 data "aws_subnets" "public_subnets" {
   filter {
     name   = "vpc-id"
-    values = [data.aws_vpc.existing_vpc.id]  # Fetch subnets from the default (existing) VPC
+    values = [data.aws_vpc.existing_vpc.id]  # Fetch subnets from the default (existing) VPC - The default VPC has public subnets only. No private subnet.
   }
 }
 

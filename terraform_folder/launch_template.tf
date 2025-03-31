@@ -24,6 +24,10 @@ resource "aws_launch_template" "blog_app_lt" {
     }
 
     user_data = base64encode(file("user_data.sh"))
+
+    tags = {
+      Name = "News_Blog_App-Server"
+    }
 }
 
 

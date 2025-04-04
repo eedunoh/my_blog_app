@@ -1,8 +1,7 @@
 # Description
 This repository contains files needed to deploy a containerized blog app on AWS with fully integrated CI/CD and IaC
 
-## Architecture Diagram
-![image](https://github.com/user-attachments/assets/de6f72f3-3493-45bd-aa73-cc5e0dcdb5ab)
+## Medium Publication
 
 
 ## Project Structure
@@ -85,6 +84,10 @@ Carefully plan how to declare and provision AWS resources. Basically, which reso
 - Flask
 - boto3
 - Other dependencies specified in `requirements.txt`
+
+
+## Architecture Diagram
+![image](https://github.com/user-attachments/assets/de6f72f3-3493-45bd-aa73-cc5e0dcdb5ab)
 
 ## Contact
 
